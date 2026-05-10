@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration System</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            color: #333;
+        }
+
+        /* LOGIN PAGE */
+        #loginPage {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #3700B3, #6200EE);
+        }
+
+        .login-card {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-card h1 {
+            text-align: center;
+            color: #3700B3;
+            margin-bottom: 8px;
+            font-size: 24px;
+        }
+
+        .login-card p {
+            text-align: center;
+            color: #666;
+            margin-bottom: 32px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #444;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+            outline: none;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            border-color: #3700B3;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: #3700B3;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.1s;
+        }
+
+        .btn:hover { background: #6200EE; }
+        .btn:active { transform: scale(0.98); }
+
+        .error-msg {
+            color: #d32f2f;
+            text-align: center;
+            margin-top: 12px;
+            font-size: 14px;
+        }
+
+        /* DASHBOARD */
+        #dashboard { display: none; }
+
+        .navbar {
+            background: #3700B3;
+            color: white;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .navbar h1 { font-size: 20px; }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .user-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .btn-logout {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.4);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+            width: auto;
+        }
+
+        .btn-logout:hover { background: rgba(255,255,255,0.3); }
+
+        .main-content { padding: 24px; }
+
+        /* STATS CARDS */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover { transform: translateY(-2px); }
+
+        .stat-card .number {
+            font-size: 36px;
+            font-weight: 700;
+            color: #3700B3;
+        }
+
+        .stat-card .label {
+            color: #666;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        /* CHARTS */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .chart-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .chart-card h3 {
+            margin-bottom: 16px;
+            color: #333;
+            font-size: 16px;
+        }
+
+        /* FILTERS */
+        .filters-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 24px;
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+
+        .filters-card .form-group {
+            margin-bottom: 0;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .btn-filter {
+            padding: 12px 24px;
+            background: #3700B3;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            width: auto;
+            transition: background 0.3s;
+        }
+
+        .btn-filter:hover { background: #6200EE; }
+
+        /* TABLE */
+        .table-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .table-header h3 { color: #333; }
+
+        .btn-sync {
+            padding: 8px 16px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            width: auto;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.3s;
+        }
+
+        .btn-sync:hover { background: #388E3C; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f8f9fa;
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 13px;
+            color: #666;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 12px 16px;
+            border-top: 1px solid #f0f0f0;
+            font-size: 14px;
+        }
+
+        tr:hover td { background: #f8f9fa; }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-present {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        /* PAGINATION */
+        .pagination {
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .pagination-info { color: #666; font-size: 14px; }
+
+        .pagination-buttons { display: flex; gap: 8px; }
+
+        .btn-page {
+            padding: 8px 16px;
+            border: 1px solid #e0e0e0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            width: auto;
+            transition: all 0.2s;
+        }
+
+        .btn-page:hover { background: #3700B3; color: white; border-color: #3700B3; }
+        .btn-page.active { background: #3700B3; color: white; border-color: #3700B3; }
+        .btn-page:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* PROGRESS BAR */
+        .progress-container {
+            display: none;
+            padding: 12px 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .progress-bar-track {
+            background: #e0e0e0;
+            border-radius: 4px;
+            height: 8px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            background: #3700B3;
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s;
+            width: 0%;
+        }
+
+        .progress-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 32px;
+            height: 32px;
+            border: 3px solid #e0e0e0;
+            border-top-color: #3700B3;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 12px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+<!-- LOGIN PAGE -->
+<div id="loginPage">
+    <div class="login-card">
+        <h1>🎓 SRS Dashboard</h1>
+        <p>Student Registration System</p>
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="loginEmail" placeholder="Enter your email" value="marko@ugd.mk"/>
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="loginPassword" placeholder="Enter your password" value="teacher123"/>
+        </div>
+        <button class="btn" onclick="login()">Login</button>
+        <div class="error-msg" id="loginError"></div>
+    </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+    <nav class="navbar">
+        <h1>🎓 SRS Dashboard</h1>
+        <div class="navbar-right">
+            <span class="user-badge" id="userBadge">👤 Loading...</span>
+            <button class="btn-logout" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <!-- STATS -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="number" id="statTotal">-</div>
+                <div class="label">Total Records</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="statToday">-</div>
+                <div class="label">Today's Attendance</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="statStudents">-</div>
+                <div class="label">Unique Students</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="statSubjects">-</div>
+                <div class="label">Subjects</div>
+            </div>
+        </div>
+
+        <!-- CHARTS -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <h3>📊 Attendance by Subject</h3>
+                <canvas id="subjectChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>📈 Attendance Trend (Last 7 Days)</h3>
+                <canvas id="trendChart"></canvas>
+            </div>
+        </div>
+
+        <!-- FILTERS -->
+        <div class="filters-card">
+            <div class="form-group">
+                <label>Search Student</label>
+                <input type="text" id="filterSearch" placeholder="Student name or ID..."/>
+            </div>
+            <div class="form-group">
+                <label>Subject</label>
+                <select id="filterSubject">
+                    <option value="">All Subjects</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Date From</label>
+                <input type="date" id="filterDateFrom"/>
+            </div>
+            <div class="form-group">
+                <label>Date To</label>
+                <input type="date" id="filterDateTo"/>
+            </div>
+            <button class="btn-filter" onclick="applyFilters()">🔍 Filter</button>
+            <button class="btn-filter" style="background:#666" onclick="resetFilters()">Reset</button>
+        </div>
+
+        <!-- TABLE -->
+        <div class="table-card">
+            <div class="table-header">
+                <h3>Attendance Records</h3>
+                <button class="btn-sync" onclick="bulkSync()">
+                    <span id="syncIcon">🔄</span> Sync Data
+                </button>
+            </div>
+
+            <!-- PROGRESS BAR -->
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-bar-track">
+                    <div class="progress-bar-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-text" id="progressText">Syncing...</div>
+            </div>
+
+            <div id="tableContainer">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <div>Loading attendance data...</div>
+                </div>
+            </div>
+
+            <div class="pagination">
+                <div class="pagination-info" id="paginationInfo">-</div>
+                <div class="pagination-buttons">
+                    <button class="btn-page" id="btnPrev" onclick="changePage(-1)">← Prev</button>
+                    <div id="pageNumbers"></div>
+                    <button class="btn-page" id="btnNext" onclick="changePage(1)">Next →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const SUPABASE_URL = "https://dcmdwnmegcgvktcctnnm.supabase.co/rest/v1";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRjbWR3bm1lZ2Nndmt0Y2N0bm5tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzMjg1ODAsImV4cCI6MjA5MzkwNDU4MH0.pUfRKI3HFAGhDMkQL5W1XA1QsAR4lPa89ldnDKMrpsg";
+
+    let currentUser = null;
+    let allRecords = [];
+    let filteredRecords = [];
+    let currentPage = 1;
+    const pageSize = 10;
+    let subjectChart = null;
+    let trendChart = null;
+    let subjects = [];
+    let users = [];
+
+    const headers = {
+        "apikey": SUPABASE_KEY,
+        "Authorization": "Bearer " + SUPABASE_KEY,
+        "Content-Type": "application/json"
+    };
+
+    async function login() {
+        const email = document.getElementById("loginEmail").value.trim();
+        const password = document.getElementById("loginPassword").value.trim();
+        const errorDiv = document.getElementById("loginError");
+        errorDiv.textContent = "";
+
+        try {
+            const res = await fetch(
+                `${SUPABASE_URL}/users?email=eq.${email}&password_hash=eq.${password}&select=*`,
+                { headers }
+            );
+            const data = await res.json();
+
+            if (data.length === 0) {
+                errorDiv.textContent = "Invalid email or password";
+                return;
+            }
+
+            currentUser = data[0];
+
+            if (currentUser.role !== "teacher" && currentUser.role !== "admin") {
+                errorDiv.textContent = "Access denied. Teachers and admins only!";
+                return;
+            }
+
+            document.getElementById("loginPage").style.display = "none";
+            document.getElementById("dashboard").style.display = "block";
+            document.getElementById("userBadge").textContent =
+                `👤 ${currentUser.full_name} (${currentUser.role})`;
+
+            await loadDashboard();
+        } catch (e) {
+            errorDiv.textContent = "Connection error: " + e.message;
+        }
+    }
+
+    function logout() {
+        currentUser = null;
+        allRecords = [];
+        filteredRecords = [];
+        document.getElementById("loginPage").style.display = "flex";
+        document.getElementById("dashboard").style.display = "none";
+    }
+
+    async function loadDashboard() {
+        await Promise.all([loadSubjects(), loadUsers()]);
+        await loadAttendance();
+        populateSubjectFilter();
+    }
+
+    async function loadSubjects() {
+        const res = await fetch(`${SUPABASE_URL}/subjects?select=*`, { headers });
+        subjects = await res.json();
+    }
+
+    async function loadUsers() {
+        const res = await fetch(`${SUPABASE_URL}/users?select=*`, { headers });
+        users = await res.json();
+    }
+
+    async function loadAttendance() {
+        let url = `${SUPABASE_URL}/attendance?select=*&order=timestamp.desc`;
+
+        // Role-based access: teachers only see their own data
+        if (currentUser.role === "teacher") {
+            url += `&teacher_id=eq.${currentUser.id}`;
+        }
+
+        const res = await fetch(url, { headers });
+        allRecords = await res.json();
+        filteredRecords = [...allRecords];
+
+        updateStats();
+        renderCharts();
+        renderTable();
+    }
+
+    function populateSubjectFilter() {
+        const select = document.getElementById("filterSubject");
+        select.innerHTML = '<option value="">All Subjects</option>';
+        subjects.forEach(s => {
+            select.innerHTML += `<option value="${s.id}">${s.name}</option>`;
+        });
+    }
+
+    function getStudentName(studentId) {
+        const user = users.find(u => u.id === studentId);
+        return user ? user.full_name : "Unknown Student";
+    }
+
+    function getSubjectName(subjectId) {
+        const subject = subjects.find(s => s.id === subjectId);
+        return subject ? subject.name : "Unknown Subject";
+    }
+
+    function updateStats() {
+        const today = new Date().toISOString().split("T")[0];
+        const todayRecords = allRecords.filter(r => r.timestamp && r.timestamp.startsWith(today));
+        const uniqueStudents = new Set(allRecords.map(r => r.student_id)).size;
+        const uniqueSubjects = new Set(allRecords.map(r => r.subject_id)).size;
+
+        document.getElementById("statTotal").textContent = allRecords.length;
+        document.getElementById("statToday").textContent = todayRecords.length;
+        document.getElementById("statStudents").textContent = uniqueStudents;
+        document.getElementById("statSubjects").textContent = uniqueSubjects;
+    }
+
+    function renderCharts() {
+        // Subject chart
+        const subjectCounts = {};
+        filteredRecords.forEach(r => {
+            const name = getSubjectName(r.subject_id);
+            subjectCounts[name] = (subjectCounts[name] || 0) + 1;
+        });
+
+        if (subjectChart) subjectChart.destroy();
+        const ctx1 = document.getElementById("subjectChart").getContext("2d");
+        subjectChart = new Chart(ctx1, {
+            type: "doughnut",
+            data: {
+                labels: Object.keys(subjectCounts),
+                datasets: [{
+                    data: Object.values(subjectCounts),
+                    backgroundColor: ["#3700B3", "#6200EE", "#03DAC5", "#FF6D00", "#B00020"]
+                }]
+            },
+            options: { responsive: true, plugins: { legend: { position: "bottom" } } }
+        });
+
+        // Trend chart - last 7 days
+        const last7Days = [];
+        const dayCounts = {};
+        for (let i = 6; i >= 0; i--) {
+            const d = new Date();
+            d.setDate(d.getDate() - i);
+            const dateStr = d.toISOString().split("T")[0];
+            last7Days.push(dateStr);
+            dayCounts[dateStr] = 0;
+        }
+
+        filteredRecords.forEach(r => {
+            if (r.timestamp) {
+                const date = r.timestamp.split("T")[0];
+                if (dayCounts.hasOwnProperty(date)) {
+                    dayCounts[date]++;
+                }
+            }
+        });
+
+        if (trendChart) trendChart.destroy();
+        const ctx2 = document.getElementById("trendChart").getContext("2d");
+        trendChart = new Chart(ctx2, {
+            type: "line",
+            data: {
+                labels: last7Days.map(d => d.slice(5)),
+                datasets: [{
+                    label: "Attendance",
+                    data: last7Days.map(d => dayCounts[d]),
+                    borderColor: "#3700B3",
+                    backgroundColor: "rgba(55, 0, 179, 0.1)",
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+            }
+        });
+    }
+
+    function applyFilters() {
+        const search = document.getElementById("filterSearch").value.toLowerCase();
+        const subjectId = document.getElementById("filterSubject").value;
+        const dateFrom = document.getElementById("filterDateFrom").value;
+        const dateTo = document.getElementById("filterDateTo").value;
+
+        filteredRecords = allRecords.filter(r => {
+            const studentName = getStudentName(r.student_id).toLowerCase();
+            const matchSearch = !search || studentName.includes(search);
+            const matchSubject = !subjectId || r.subject_id == subjectId;
+            const recordDate = r.timestamp ? r.timestamp.split("T")[0] : "";
+            const matchFrom = !dateFrom || recordDate >= dateFrom;
+            const matchTo = !dateTo || recordDate <= dateTo;
+            return matchSearch && matchSubject && matchFrom && matchTo;
+        });
+
+        currentPage = 1;
+        renderCharts();
+        renderTable();
+    }
+
+    function resetFilters() {
+        document.getElementById("filterSearch").value = "";
+        document.getElementById("filterSubject").value = "";
+        document.getElementById("filterDateFrom").value = "";
+        document.getElementById("filterDateTo").value = "";
+        filteredRecords = [...allRecords];
+        currentPage = 1;
+        renderCharts();
+        renderTable();
+    }
+
+    function renderTable() {
+        const start = (currentPage - 1) * pageSize;
+        const end = start + pageSize;
+        const pageRecords = filteredRecords.slice(start, end);
+        const totalPages = Math.ceil(filteredRecords.length / pageSize);
+
+        let html = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Student</th>
+                        <th>Subject</th>
+                        <th>Date & Time</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        if (pageRecords.length === 0) {
+            html += `<tr><td colspan="5" style="text-align:center;padding:40px;color:#666">
+                No records found</td></tr>`;
+        } else {
+            pageRecords.forEach((r, i) => {
+                const date = r.timestamp ?
+                    new Date(r.timestamp).toLocaleString() : "N/A";
+                html += `
+                    <tr>
+                        <td>${start + i + 1}</td>
+                        <td>${getStudentName(r.student_id)}</td>
+                        <td>${getSubjectName(r.subject_id)}</td>
+                        <td>${date}</td>
+                        <td><span class="status-badge status-present">✅ Present</span></td>
+                    </tr>
+                `;
+            });
+        }
+
+        html += "</tbody></table>";
+        document.getElementById("tableContainer").innerHTML = html;
+
+        // Pagination info
+        document.getElementById("paginationInfo").textContent =
+            `Showing ${Math.min(start + 1, filteredRecords.length)}-${Math.min(end, filteredRecords.length)} of ${filteredRecords.length} records`;
+
+        // Page buttons
+        let pagesHtml = "";
+        for (let i = 1; i <= totalPages; i++) {
+            if (i === currentPage || Math.abs(i - currentPage) <= 2) {
+                pagesHtml += `<button class="btn-page ${i === currentPage ? 'active' : ''}"
+                    onclick="goToPage(${i})">${i}</button>`;
+            }
+        }
+        document.getElementById("pageNumbers").innerHTML = pagesHtml;
+        document.getElementById("btnPrev").disabled = currentPage === 1;
+        document.getElementById("btnNext").disabled = currentPage >= totalPages;
+    }
+
+    function changePage(dir) {
+        const totalPages = Math.ceil(filteredRecords.length / pageSize);
+        currentPage = Math.max(1, Math.min(currentPage + dir, totalPages));
+        renderTable();
+    }
+
+    function goToPage(page) {
+        currentPage = page;
+        renderTable();
+    }
+
+    async function bulkSync() {
+        const progressContainer = document.getElementById("progressContainer");
+        const progressFill = document.getElementById("progressFill");
+        const progressText = document.getElementById("progressText");
+        const syncIcon = document.getElementById("syncIcon");
+
+        progressContainer.style.display = "block";
+        syncIcon.textContent = "⏳";
+
+        const steps = [
+            { text: "Fetching attendance records...", progress: 25 },
+            { text: "Fetching student data...", progress: 50 },
+            { text: "Fetching subject data...", progress: 75 },
+            { text: "Updating dashboard...", progress: 90 }
+        ];
+
+        for (const step of steps) {
+            progressText.textContent = step.text;
+            progressFill.style.width = step.progress + "%";
+            await new Promise(r => setTimeout(r, 400));
+        }
+
+        await loadDashboard();
+
+        progressFill.style.width = "100%";
+        progressText.textContent = `✅ Sync complete! ${allRecords.length} records loaded.`;
+        syncIcon.textContent = "✅";
+
+        setTimeout(() => {
+            progressContainer.style.display = "none";
+            syncIcon.textContent = "🔄";
+            progressFill.style.width = "0%";
+        }, 2000);
+    }
+</script>
+</body>
+</html>

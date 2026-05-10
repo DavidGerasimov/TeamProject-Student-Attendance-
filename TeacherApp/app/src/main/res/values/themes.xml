@@ -1,0 +1,9 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Base.Theme.TeacherApp" parent="Theme.Material3.DayNight">
+        <item name="colorPrimary">#FF3700B3</item>
+        <item name="colorPrimaryDark">#FF3700B3</item>
+        <item name="colorAccent">#FF3700B3</item>
+    </style>
+
+    <style name="Theme.TeacherApp" parent="Base.Theme.TeacherApp" />
+</resources>
