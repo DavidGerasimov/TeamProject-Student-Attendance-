@@ -4,23 +4,29 @@ import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.nfc.NdefMessage;
-import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
-import android.nfc.tech.Ndef;
+import android.nfc.tech.IsoDep;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 public class NfcHelper {
 
     private NfcAdapter nfcAdapter;
     private Activity activity;
 
-    public interface NfcReadCallback {
-        void onNfcRead(String studentId);
-        void onNfcError(String error);
-    }
+    // Must match the AID in apduservice.xml
+    private static final byte[] SELECT_APDU = {
+            (byte) 0x00, (byte) 0xA4, (byte) 0x04, (byte) 0x00,
+            (byte) 0x05,
+            (byte) 0xF2, (byte) 0x22, (byte) 0x22, (byte) 0x22, (byte) 0x22,
+            (byte) 0x00
+    };
+
+    private static final byte[] GET_DATA_APDU = {
+            (byte) 0x00, (byte) 0xCA, (byte) 0x00, (byte) 0x00, (byte) 0x00
+    };
 
     public NfcHelper(Activity activity) {
         this.activity = activity;
@@ -42,11 +48,15 @@ public class NfcHelper {
                 activity, 0, intent, PendingIntent.FLAG_MUTABLE);
 
         IntentFilter[] filters = new IntentFilter[]{
-                new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED),
-                new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED)
+                new IntentFilter(NfcAdapter.ACTION_TECH_DISCOVERED)
         };
 
-        nfcAdapter.enableForegroundDispatch(activity, pendingIntent, filters, null);
+        String[][] techLists = new String[][]{
+                new String[]{IsoDep.class.getName()}
+        };
+
+        nfcAdapter.enableForegroundDispatch(activity, pendingIntent,
+                filters, techLists);
     }
 
     public void disableForegroundDispatch() {
@@ -58,34 +68,55 @@ public class NfcHelper {
     public String readStudentIdFromIntent(Intent intent) {
         String action = intent.getAction();
 
-        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(action) ||
-                NfcAdapter.ACTION_TAG_DISCOVERED.equals(action)) {
-
-            // Try reading NDEF message first
-            android.os.Parcelable[] rawMessages =
-                    intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
-
-            if (rawMessages != null && rawMessages.length > 0) {
-                NdefMessage message = (NdefMessage) rawMessages[0];
-                NdefRecord record = message.getRecords()[0];
-                byte[] payload = record.getPayload();
-                // Skip language code bytes for TEXT record
-                int langCodeLength = payload[0] & 0x3F;
-                return new String(payload, langCodeLength + 1,
-                        payload.length - langCodeLength - 1, StandardCharsets.UTF_8);
-            }
-
-            // Try reading raw tag ID as fallback
+        if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(action)) {
             Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
             if (tag != null) {
-                byte[] tagId = tag.getId();
-                StringBuilder sb = new StringBuilder();
-                for (byte b : tagId) {
-                    sb.append(String.format("%02X", b));
+                IsoDep isoDep = IsoDep.get(tag);
+                if (isoDep != null) {
+                    try {
+                        isoDep.connect();
+                        isoDep.setTimeout(5000);
+
+                        // Step 1: Select our app by AID
+                        byte[] selectResponse = isoDep.transceive(SELECT_APDU);
+                        android.util.Log.d("NFC_DEBUG", "Select response: " +
+                                bytesToHex(selectResponse));
+
+                        // Check if selection was successful (SW = 90 00)
+                        if (selectResponse != null && selectResponse.length >= 2) {
+                            byte sw1 = selectResponse[selectResponse.length - 2];
+                            byte sw2 = selectResponse[selectResponse.length - 1];
+
+                            if (sw1 == (byte) 0x90 && sw2 == (byte) 0x00) {
+                                // Step 2: Request the student data
+                                byte[] dataResponse = isoDep.transceive(GET_DATA_APDU);
+                                android.util.Log.d("NFC_DEBUG", "Data response: " +
+                                        bytesToHex(dataResponse));
+
+                                if (dataResponse != null && dataResponse.length > 2) {
+                                    // Remove the last 2 status bytes (90 00)
+                                    byte[] payload = Arrays.copyOf(dataResponse,
+                                            dataResponse.length - 2);
+                                    return new String(payload, StandardCharsets.UTF_8);
+                                }
+                            }
+                        }
+                        isoDep.close();
+                    } catch (Exception e) {
+                        android.util.Log.e("NFC_DEBUG", "Error: " + e.getMessage());
+                    }
                 }
-                return sb.toString();
             }
         }
         return null;
+    }
+
+    private static String bytesToHex(byte[] bytes) {
+        if (bytes == null) return "null";
+        StringBuilder sb = new StringBuilder();
+        for (byte b : bytes) {
+            sb.append(String.format("%02X ", b));
+        }
+        return sb.toString();
     }
 }

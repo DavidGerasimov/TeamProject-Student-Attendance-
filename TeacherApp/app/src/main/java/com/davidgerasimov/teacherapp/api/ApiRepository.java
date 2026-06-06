@@ -40,6 +40,15 @@ public class ApiRepository {
         void onError(String error);
     }
 
+    public interface DuplicateCheckCallback {
+        void onResult(boolean isDuplicate);
+    }
+
+    public interface AttendanceTodayCallback {
+        void onSuccess(List<String> studentNames);
+        void onError(String error);
+    }
+
     public void login(String email, String password, UserCallback callback) {
         String endpoint = "users?email=eq." + email +
                 "&password_hash=eq." + password + "&select=*";
@@ -123,7 +132,8 @@ public class ApiRepository {
         });
     }
 
-    public void recordAttendance(int studentId, int subjectId, int teacherId, SaveCallback callback) {
+    public void recordAttendance(int studentId, int subjectId, int teacherId,
+                                 SaveCallback callback) {
         try {
             JSONObject json = new JSONObject();
             json.put("student_id", studentId);
@@ -143,7 +153,8 @@ public class ApiRepository {
                 }
 
                 @Override
-                public void onResponse(Call call, Response response) throws java.io.IOException {
+                public void onResponse(Call call, Response response)
+                        throws java.io.IOException {
                     if (response.isSuccessful()) {
                         callback.onSuccess();
                     } else {
@@ -155,6 +166,94 @@ public class ApiRepository {
         } catch (Exception e) {
             callback.onError(e.getMessage());
         }
+    }
+
+    public void checkDuplicateAttendance(int studentId, int subjectId,
+                                         DuplicateCheckCallback callback) {
+        String today = new java.text.SimpleDateFormat("yyyy-MM-dd",
+                java.util.Locale.getDefault()).format(new java.util.Date());
+
+        String endpoint = "attendance?student_id=eq." + studentId
+                + "&subject_id=eq." + subjectId
+                + "&timestamp=gte." + today + "T00:00:00"
+                + "&select=id";
+
+        Request request = SupabaseClient.getRequestBuilder(endpoint)
+                .get()
+                .build();
+
+        SupabaseClient.getClient().newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, java.io.IOException e) {
+                callback.onResult(false);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response)
+                    throws java.io.IOException {
+                if (response.isSuccessful()) {
+                    try {
+                        String body = response.body().string();
+                        JSONArray array = new JSONArray(body);
+                        callback.onResult(array.length() > 0);
+                    } catch (Exception e) {
+                        callback.onResult(false);
+                    }
+                } else {
+                    callback.onResult(false);
+                }
+            }
+        });
+    }
+
+    public void getTodayAttendanceBySubject(int subjectId,
+                                            AttendanceTodayCallback callback) {
+        String today = new java.text.SimpleDateFormat("yyyy-MM-dd",
+                java.util.Locale.getDefault()).format(new java.util.Date());
+
+        String endpoint = "attendance?subject_id=eq." + subjectId
+                + "&timestamp=gte." + today + "T00:00:00"
+                + "&select=student_id,users(full_name)";
+
+        Request request = SupabaseClient.getRequestBuilder(endpoint)
+                .header("Accept", "application/json")
+                .get()
+                .build();
+
+        SupabaseClient.getClient().newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, java.io.IOException e) {
+                callback.onError(e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response)
+                    throws java.io.IOException {
+                if (response.isSuccessful()) {
+                    try {
+                        String body = response.body().string();
+                        JSONArray array = new JSONArray(body);
+                        List<String> names = new ArrayList<>();
+                        for (int i = 0; i < array.length(); i++) {
+                            JSONObject obj = array.getJSONObject(i);
+                            JSONObject user = obj.optJSONObject("users");
+                            if (user != null) {
+                                names.add(user.getString("full_name") +
+                                        " - Present ✅");
+                            } else {
+                                names.add("Student ID: " +
+                                        obj.getInt("student_id") + " - Present ✅");
+                            }
+                        }
+                        callback.onSuccess(names);
+                    } catch (Exception e) {
+                        callback.onError(e.getMessage());
+                    }
+                } else {
+                    callback.onError("Error: " + response.code());
+                }
+            }
+        });
     }
 
     public void getAttendanceBySubject(int subjectId, AttendanceCallback callback) {
@@ -171,7 +270,8 @@ public class ApiRepository {
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws java.io.IOException {
+            public void onResponse(Call call, Response response)
+                    throws java.io.IOException {
                 if (response.isSuccessful()) {
                     try {
                         String body = response.body().string();
@@ -213,7 +313,8 @@ public class ApiRepository {
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws java.io.IOException {
+            public void onResponse(Call call, Response response)
+                    throws java.io.IOException {
                 if (response.isSuccessful()) {
                     try {
                         String body = response.body().string();
@@ -232,49 +333,6 @@ public class ApiRepository {
                     }
                 } else {
                     callback.onError("Error: " + response.code());
-                }
-            }
-        });
-    }
-    public interface DuplicateCheckCallback {
-        void onResult(boolean isDuplicate);
-    }
-
-    public void checkDuplicateAttendance(int studentId, int subjectId,
-                                         DuplicateCheckCallback callback) {
-        // Get today's date in the format Supabase uses
-        String today = new java.text.SimpleDateFormat("yyyy-MM-dd",
-                java.util.Locale.getDefault()).format(new java.util.Date());
-
-        String endpoint = "attendance?student_id=eq." + studentId
-                + "&subject_id=eq." + subjectId
-                + "&timestamp=gte." + today + "T00:00:00"
-                + "&select=id";
-
-        Request request = SupabaseClient.getRequestBuilder(endpoint)
-                .get()
-                .build();
-
-        SupabaseClient.getClient().newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, java.io.IOException e) {
-                // If check fails allow the scan
-                callback.onResult(false);
-            }
-
-            @Override
-            public void onResponse(Call call, Response response)
-                    throws java.io.IOException {
-                if (response.isSuccessful()) {
-                    try {
-                        String body = response.body().string();
-                        org.json.JSONArray array = new org.json.JSONArray(body);
-                        callback.onResult(array.length() > 0);
-                    } catch (Exception e) {
-                        callback.onResult(false);
-                    }
-                } else {
-                    callback.onResult(false);
                 }
             }
         });

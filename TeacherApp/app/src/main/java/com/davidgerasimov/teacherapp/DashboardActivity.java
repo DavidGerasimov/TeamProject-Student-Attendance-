@@ -170,6 +170,53 @@ public class DashboardActivity extends AppCompatActivity {
                     adapter.setDropDownViewResource(
                             android.R.layout.simple_spinner_dropdown_item);
                     spinnerSubject.setAdapter(adapter);
+
+                    spinnerSubject.setOnItemSelectedListener(
+                            new android.widget.AdapterView.OnItemSelectedListener() {
+                                @Override
+                                public void onItemSelected(
+                                        android.widget.AdapterView<?> parent,
+                                        android.view.View view, int position, long id) {
+                                    attendanceItems.clear();
+                                    attendanceAdapter.notifyDataSetChanged();
+                                    txtLastScanned.setText("Loading attendance...");
+                                    txtNfcStatus.setText("📱 Ready to scan NFC");
+
+                                    if (!subjects.isEmpty()) {
+                                        int subjectId = Integer.parseInt(
+                                                subjects.get(position)[0]);
+                                        repository.getTodayAttendanceBySubject(subjectId,
+                                                new ApiRepository.AttendanceTodayCallback() {
+                                                    @Override
+                                                    public void onSuccess(List<String> studentNames) {
+                                                        runOnUiThread(() -> {
+                                                            attendanceItems.clear();
+                                                            attendanceItems.addAll(studentNames);
+                                                            attendanceAdapter.notifyDataSetChanged();
+                                                            if (studentNames.isEmpty()) {
+                                                                txtLastScanned.setText(
+                                                                        "No students scanned yet");
+                                                            } else {
+                                                                txtLastScanned.setText(
+                                                                        studentNames.size() +
+                                                                                " student(s) present today");
+                                                            }
+                                                        });
+                                                    }
+
+                                                    @Override
+                                                    public void onError(String error) {
+                                                        runOnUiThread(() -> txtLastScanned.setText(
+                                                                "No students scanned yet"));
+                                                    }
+                                                });
+                                    }
+                                }
+
+                                @Override
+                                public void onNothingSelected(
+                                        android.widget.AdapterView<?> parent) {}
+                            });
                 });
             }
 
@@ -238,14 +285,13 @@ public class DashboardActivity extends AppCompatActivity {
                                 int subjectId = Integer.parseInt(
                                         subjects.get(selectedSubjectIndex)[0]);
 
-                                // Check for duplicate before recording
                                 repository.checkDuplicateAttendance(student.getId(),
                                         subjectId, isDuplicate -> {
                                             runOnUiThread(() -> {
                                                 if (isDuplicate) {
                                                     txtNfcStatus.setText("⚠️ Already scanned today!");
                                                     txtLastScanned.setText(student.getFullName() +
-                                                            " already marked present for this subject!");
+                                                            " already marked present!");
                                                     Toast.makeText(DashboardActivity.this,
                                                             student.getFullName() +
                                                                     " already marked present!",
