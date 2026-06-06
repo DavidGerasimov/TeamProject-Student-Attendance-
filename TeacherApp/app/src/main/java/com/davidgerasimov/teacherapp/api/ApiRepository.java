@@ -236,4 +236,47 @@ public class ApiRepository {
             }
         });
     }
+    public interface DuplicateCheckCallback {
+        void onResult(boolean isDuplicate);
+    }
+
+    public void checkDuplicateAttendance(int studentId, int subjectId,
+                                         DuplicateCheckCallback callback) {
+        // Get today's date in the format Supabase uses
+        String today = new java.text.SimpleDateFormat("yyyy-MM-dd",
+                java.util.Locale.getDefault()).format(new java.util.Date());
+
+        String endpoint = "attendance?student_id=eq." + studentId
+                + "&subject_id=eq." + subjectId
+                + "&timestamp=gte." + today + "T00:00:00"
+                + "&select=id";
+
+        Request request = SupabaseClient.getRequestBuilder(endpoint)
+                .get()
+                .build();
+
+        SupabaseClient.getClient().newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, java.io.IOException e) {
+                // If check fails allow the scan
+                callback.onResult(false);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response)
+                    throws java.io.IOException {
+                if (response.isSuccessful()) {
+                    try {
+                        String body = response.body().string();
+                        org.json.JSONArray array = new org.json.JSONArray(body);
+                        callback.onResult(array.length() > 0);
+                    } catch (Exception e) {
+                        callback.onResult(false);
+                    }
+                } else {
+                    callback.onResult(false);
+                }
+            }
+        });
+    }
 }
