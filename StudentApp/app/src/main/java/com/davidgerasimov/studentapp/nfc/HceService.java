@@ -79,4 +79,5 @@ public class HceService extends HostApduService {
         }
         return sb.toString();
     }
+
 }

@@ -378,7 +378,12 @@ public class DashboardActivity extends AppCompatActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        String action = intent.getAction();
+        android.util.Log.d("NFC_DEBUG", "onNewIntent called, action: " + action);
+        Toast.makeText(this, "NFC detected: " + action, Toast.LENGTH_SHORT).show();
         String rawPayload = nfcHelper.readStudentIdFromIntent(intent);
+        android.util.Log.d("NFC_DEBUG", "Payload: " + rawPayload);
+        Toast.makeText(this, "Payload: " + rawPayload, Toast.LENGTH_LONG).show();
         if (rawPayload != null) {
             handleNfcScan(rawPayload);
         }
