@@ -3,49 +3,89 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:fitsSystemWindows="true">
+    android:fitsSystemWindows="true"
+    android:background="#F5F5F5">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp"
-        android:background="#FF3700B3">
-
-        <TextView
-            android:id="@+id/txtWelcome"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Welcome, Teacher!"
-            android:textColor="@android:color/white"
-            android:textSize="18sp"
-            android:textStyle="bold"/>
-
-        <Button
-            android:id="@+id/btnLogout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Logout"
-            android:textColor="@android:color/white"
-            android:backgroundTint="#FF3700B3"/>
-
-    </LinearLayout>
-
+    <!-- HEADER -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp"
-        android:background="#F5F5F5"
-        android:layout_margin="16dp">
+        android:background="#D71920"
+        android:padding="20dp">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="⚠️ Select subject BEFORE scanning!"
-            android:textSize="14sp"
-            android:textColor="#FF3700B3"
+            android:text="УНИВЕРЗИТЕТ ГОЦЕ ДЕЛЧЕВ"
+            android:textSize="11sp"
+            android:textColor="#FFCCCC"
+            android:letterSpacing="0.2"
+            android:fontFamily="sans-serif"
+            android:layout_marginBottom="4dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txtWelcome"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Добредојдовте!"
+                    android:textColor="@android:color/white"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:fontFamily="sans-serif-medium"/>
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnLogout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Одјава"
+                android:textColor="@android:color/white"
+                android:backgroundTint="#B71C1C"
+                android:textSize="13sp"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- SUBJECT SELECTION -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@android:color/white"
+        android:padding="16dp"
+        android:layout_marginBottom="8dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ПРЕДМЕТ"
+            android:textSize="11sp"
+            android:textColor="#58595B"
+            android:letterSpacing="0.2"
+            android:fontFamily="sans-serif"
+            android:layout_marginBottom="4dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="⚠️ Изберете предмет пред скенирање!"
+            android:textSize="12sp"
+            android:textColor="#D71920"
             android:textStyle="bold"
             android:layout_marginBottom="8dp"/>
 
@@ -58,61 +98,118 @@
                 android:id="@+id/spinnerSubject"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"/>
+                android:layout_weight="1"
+                android:background="#F5F5F5"
+                android:padding="4dp"/>
 
             <Button
                 android:id="@+id/btnAddSubject"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="+ Add"
+                android:text="+ Додај"
                 android:textSize="12sp"
+                android:backgroundTint="#D71920"
+                android:textColor="@android:color/white"
                 android:layout_marginStart="8dp"/>
 
         </LinearLayout>
 
     </LinearLayout>
 
+    <!-- NFC STATUS -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:background="@android:color/white"
         android:padding="16dp"
-        android:background="#F5F5F5"
-        android:layout_margin="16dp">
+        android:layout_marginBottom="8dp">
 
         <TextView
-            android:id="@+id/txtNfcStatus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="📱 Ready to scan NFC"
-            android:textSize="18sp"
-            android:gravity="center"
-            android:padding="16dp"/>
+            android:text="NFC СКЕНЕР"
+            android:textSize="11sp"
+            android:textColor="#58595B"
+            android:letterSpacing="0.2"
+            android:fontFamily="sans-serif"
+            android:layout_marginBottom="8dp"/>
 
-        <TextView
-            android:id="@+id/txtLastScanned"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="No student scanned yet"
-            android:textSize="14sp"
-            android:gravity="center"
-            android:padding="8dp"/>
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <View
+                android:layout_width="4dp"
+                android:layout_height="40dp"
+                android:background="#D71920"
+                android:layout_marginEnd="12dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txtNfcStatus"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="📱 Подготвено за скенирање"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#231F20"
+                    android:fontFamily="sans-serif-medium"/>
+
+                <TextView
+                    android:id="@+id/txtLastScanned"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Нема скениран студент"
+                    android:textSize="13sp"
+                    android:textColor="#58595B"
+                    android:fontFamily="sans-serif"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
 
     </LinearLayout>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Today's Attendance"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:paddingLeft="16dp"
-        android:paddingBottom="8dp"/>
-
-    <ListView
-        android:id="@+id/listAttendance"
+    <!-- ATTENDANCE LIST -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:background="@android:color/white"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ПРИСУТНИ СТУДЕНТИ ДЕНЕС"
+            android:textSize="11sp"
+            android:textColor="#58595B"
+            android:letterSpacing="0.2"
+            android:fontFamily="sans-serif"
+            android:layout_marginBottom="8dp"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="#D71920"
+            android:layout_marginBottom="8dp"/>
+
+        <ListView
+            android:id="@+id/listAttendance"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:divider="#E6E7E8"
+            android:dividerHeight="1dp"/>
+
+    </LinearLayout>
 
 </LinearLayout>

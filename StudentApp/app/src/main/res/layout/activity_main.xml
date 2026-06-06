@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:fitsSystemWindows="true"
-    android:background="#3700B3">
+    android:background="#D71920">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,30 +14,42 @@
         android:orientation="vertical"
         android:padding="32dp">
 
-        <ImageView
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:src="@mipmap/ic_launcher"
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="УНИВЕРЗИТЕТ"
+            android:textSize="14sp"
+            android:textColor="#FFCCCC"
+            android:letterSpacing="0.3"
+            android:gravity="center"
+            android:fontFamily="sans-serif"
+            android:layout_marginBottom="4dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ГОЦЕ ДЕЛЧЕВ"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:gravity="center"
+            android:fontFamily="sans-serif-medium"
+            android:layout_marginBottom="8dp"/>
+
+        <View
+            android:layout_width="40dp"
+            android:layout_height="2dp"
+            android:background="@android:color/white"
             android:layout_marginBottom="16dp"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Student App"
-            android:textSize="32sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/white"
+            android:text="Систем за евиденција на студенти"
+            android:textSize="14sp"
+            android:textColor="#FFCCCC"
             android:gravity="center"
-            android:layout_marginBottom="8dp"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Student Registration System"
-            android:textSize="16sp"
-            android:textColor="#B39DDB"
-            android:gravity="center"
-            android:layout_marginBottom="48dp"/>
+            android:fontFamily="sans-serif"/>
 
     </LinearLayout>
 
@@ -46,69 +58,86 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:background="@android:color/white"
-        android:padding="32dp"
-        android:elevation="8dp">
+        android:padding="32dp">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Sign In"
-            android:textSize="24sp"
+            android:text="Најава — Студент"
+            android:textSize="20sp"
             android:textStyle="bold"
-            android:textColor="#3700B3"
+            android:textColor="#231F20"
+            android:fontFamily="sans-serif-medium"
             android:layout_marginBottom="24dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Е-маил"
+            android:textSize="12sp"
+            android:textColor="#58595B"
+            android:layout_marginBottom="4dp"/>
 
         <EditText
             android:id="@+id/editEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="UGD Student Email"
+            android:hint="ime.indeks@student.ugd.edu.mk"
             android:inputType="textEmailAddress"
             android:padding="12dp"
-            android:layout_marginBottom="16dp"
-            android:background="@android:color/white"
-            android:drawableLeft="@android:drawable/ic_dialog_email"/>
+            android:layout_marginBottom="4dp"
+            android:background="#F5F5F5"
+            android:textColor="#231F20"/>
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#E0E0E0"
+            android:layout_height="2dp"
+            android:background="#D71920"
             android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Лозинка"
+            android:textSize="12sp"
+            android:textColor="#58595B"
+            android:layout_marginBottom="4dp"/>
 
         <EditText
             android:id="@+id/editPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Password"
+            android:hint="••••••••"
             android:inputType="textPassword"
             android:padding="12dp"
-            android:layout_marginBottom="8dp"
-            android:background="@android:color/white"
-            android:drawableLeft="@android:drawable/ic_lock_lock"/>
+            android:layout_marginBottom="4dp"
+            android:background="#F5F5F5"
+            android:textColor="#231F20"/>
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#E0E0E0"
+            android:layout_height="2dp"
+            android:background="#D71920"
             android:layout_marginBottom="24dp"/>
 
         <Button
             android:id="@+id/btnLogin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="LOGIN"
-            android:backgroundTint="#3700B3"
+            android:text="НАЈАВА"
+            android:backgroundTint="#D71920"
             android:textColor="@android:color/white"
             android:padding="14dp"
+            android:fontFamily="sans-serif-medium"
             android:layout_marginBottom="16dp"/>
 
         <TextView
             android:id="@+id/txtRegister"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Don't have an account? Register"
+            android:text="Немате сметка? Регистрирајте се"
             android:gravity="center"
-            android:textColor="#3700B3"
+            android:textColor="#D71920"
             android:padding="8dp"/>
 
         <ProgressBar

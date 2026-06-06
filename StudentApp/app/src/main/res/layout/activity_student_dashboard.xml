@@ -4,53 +4,72 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:fitsSystemWindows="true"
-    android:background="#F0F2F5">
+    android:background="#F5F5F5">
 
     <!-- HEADER -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp"
-        android:background="#3700B3"
-        android:elevation="4dp">
+        android:orientation="vertical"
+        android:background="#D71920"
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="УНИВЕРЗИТЕТ ГОЦЕ ДЕЛЧЕВ"
+            android:textSize="11sp"
+            android:textColor="#FFCCCC"
+            android:letterSpacing="0.2"
+            android:fontFamily="sans-serif"
+            android:layout_marginBottom="4dp"/>
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
-            <TextView
-                android:id="@+id/txtWelcome"
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Welcome!"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txtWelcome"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Добредојдовте!"
+                    android:textColor="@android:color/white"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:fontFamily="sans-serif-medium"/>
+
+                <TextView
+                    android:id="@+id/txtStudentId"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFCCCC"
+                    android:textSize="13sp"
+                    android:fontFamily="sans-serif"/>
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnLogout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Одјава"
                 android:textColor="@android:color/white"
-                android:textSize="20sp"
-                android:textStyle="bold"/>
-
-            <TextView
-                android:id="@+id/txtStudentId"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="#B39DDB"
-                android:textSize="14sp"/>
+                android:backgroundTint="#B71C1C"
+                android:textSize="13sp"/>
 
         </LinearLayout>
 
-        <Button
-            android:id="@+id/btnLogout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Logout"
-            android:textColor="@android:color/white"
-            android:backgroundTint="#3700B3"
-            android:textSize="14sp"/>
-
     </LinearLayout>
 
-    <!-- NFC CARD -->
+    <!-- NFC MAIN CARD -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -59,86 +78,90 @@
         android:gravity="center"
         android:padding="24dp">
 
-        <androidx.cardview.widget.CardView
-            xmlns:app="http://schemas.android.com/apk/res-auto"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="8dp"
+            android:orientation="vertical"
+            android:background="@android:color/white"
+            android:padding="32dp"
+            android:gravity="center"
             android:layout_marginBottom="16dp">
 
-            <LinearLayout
+            <View
+                android:layout_width="4dp"
+                android:layout_height="40dp"
+                android:background="#D71920"
+                android:layout_marginBottom="16dp"/>
+
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:text="NFC"
+                android:textSize="48sp"
+                android:textStyle="bold"
                 android:gravity="center"
-                android:padding="32dp"
-                android:background="@android:color/white">
+                android:textColor="#D71920"
+                android:fontFamily="sans-serif-medium"
+                android:layout_marginBottom="8dp"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="📱"
-                    android:textSize="64sp"
-                    android:layout_marginBottom="16dp"/>
+            <TextView
+                android:id="@+id/txtNfcStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Приближете го телефонот до уредот на наставникот"
+                android:textSize="16sp"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:textColor="#231F20"
+                android:fontFamily="sans-serif-medium"
+                android:layout_marginBottom="8dp"/>
 
-                <TextView
-                    android:id="@+id/txtNfcStatus"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Hold phone near teacher's device"
-                    android:textSize="18sp"
-                    android:gravity="center"
-                    android:textStyle="bold"
-                    android:textColor="#3700B3"
-                    android:layout_marginBottom="8dp"/>
+            <TextView
+                android:id="@+id/txtLastAttendance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="13sp"
+                android:gravity="center"
+                android:textColor="#58595B"
+                android:fontFamily="sans-serif"/>
 
-                <TextView
-                    android:id="@+id/txtLastAttendance"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="13sp"
-                    android:gravity="center"
-                    android:textColor="@android:color/darker_gray"/>
+        </LinearLayout>
 
-            </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
-
-        <!-- NFC STATUS CARD -->
-        <androidx.cardview.widget.CardView
-            xmlns:app="http://schemas.android.com/apk/res-auto"
+        <!-- NFC STATUS -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp">
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:background="@android:color/white"
+            android:gravity="center_vertical">
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <View
+                android:layout_width="4dp"
+                android:layout_height="match_parent"
+                android:background="#D71920"
+                android:layout_marginEnd="12dp"/>
+
+            <TextView
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="16dp"
-                android:background="@android:color/white"
-                android:gravity="center_vertical">
+                android:layout_weight="1"
+                android:text="Статус на NFC"
+                android:textStyle="bold"
+                android:textSize="15sp"
+                android:textColor="#231F20"
+                android:fontFamily="sans-serif-medium"/>
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="NFC Status"
-                    android:textStyle="bold"
-                    android:textSize="16sp"/>
+            <TextView
+                android:id="@+id/txtNfcEnabled"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Проверување..."
+                android:textSize="13sp"
+                android:textColor="#58595B"
+                android:fontFamily="sans-serif"/>
 
-                <TextView
-                    android:id="@+id/txtNfcEnabled"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Checking..."
-                    android:textSize="14sp"/>
-
-            </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
+        </LinearLayout>
 
     </LinearLayout>
 
